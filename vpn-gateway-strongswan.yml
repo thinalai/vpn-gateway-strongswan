@@ -1,67 +1,62 @@
-# Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
-
-AWSTemplateFormatVersion: '2010-09-09'
-
+AWSTemplateFormatVersion: 2010-09-09
 Description: strongSwan VPN Gateway as an EC2 Instance
-
 Metadata:
-  AWS::CloudFormation::Interface:
+  'AWS::CloudFormation::Interface':
     ParameterGroups:
-    - Label:
-        default: System Classification
-      Parameters:
-      - pOrg
-      - pSystem
-      - pApp
-    - Label:
-        default: System Environment
-      Parameters:
-      - pEnvPurpose
-    - Label:
-        default: Authentication
-      Parameters:
-      - pAuthType
-      - pCertBucket
-      - pCgwCert
-      - pCgwPrivateKey
-      - pCgwPrivateKeyPassphraseSecretName
-      - pRootCaCert
-      - pSubordinateCaCert
-    - Label:
-        default: VPN Tunnel 1
-      Parameters:
-      - pTunnel1PskSecretName
-      - pTunnel1VgwCertDomainName
-      - pTunnel1VgwOutsideIpAddress
-      - pTunnel1CgwInsideIpAddress
-      - pTunnel1VgwInsideIpAddress
-      - pTunnel1VgwBgpAsn
-      - pTunnel1BgpNeighborIpAddress
-    - Label:
-        default: VPN Tunnel 2
-      Parameters:
-      - pTunnel2PskSecretName
-      - pTunnel2VgwCertDomainName
-      - pTunnel2VgwOutsideIpAddress
-      - pTunnel2CgwInsideIpAddress
-      - pTunnel2VgwInsideIpAddress
-      - pTunnel2VgwBgpAsn
-      - pTunnel2BgpNeighborIpAddress
-    - Label:
-        default: Local Network Configuration
-      Parameters:
-      - pVpcId
-      - pVpcCidr
-      - pSubnetId
-      - pUseElasticIp
-      - pEipAllocationId
-      - pLocalBgpAsn
-    - Label:
-        default: EC2  
-      Parameters:
-      - pAmiId
-      - pInstanceType
-
+      - Label:
+          default: System Classification
+        Parameters:
+          - pOrg
+          - pSystem
+          - pApp
+      - Label:
+          default: System Environment
+        Parameters:
+          - pEnvPurpose
+      - Label:
+          default: Authentication
+        Parameters:
+          - pAuthType
+          - pCertBucket
+          - pCgwCert
+          - pCgwPrivateKey
+          - pCgwPrivateKeyPassphraseSecretName
+          - pRootCaCert
+          - pSubordinateCaCert
+      - Label:
+          default: VPN Tunnel 1
+        Parameters:
+          - pTunnel1PskSecretName
+          - pTunnel1VgwCertDomainName
+          - pTunnel1VgwOutsideIpAddress
+          - pTunnel1CgwInsideIpAddress
+          - pTunnel1VgwInsideIpAddress
+          - pTunnel1VgwBgpAsn
+          - pTunnel1BgpNeighborIpAddress
+      - Label:
+          default: VPN Tunnel 2
+        Parameters:
+          - pTunnel2PskSecretName
+          - pTunnel2VgwCertDomainName
+          - pTunnel2VgwOutsideIpAddress
+          - pTunnel2CgwInsideIpAddress
+          - pTunnel2VgwInsideIpAddress
+          - pTunnel2VgwBgpAsn
+          - pTunnel2BgpNeighborIpAddress
+      - Label:
+          default: Local Network Configuration
+        Parameters:
+          - pVpcId
+          - pVpcCidr
+          - pSubnetId
+          - pUseElasticIp
+          - pEipAllocationId
+          - pLocalBgpAsn
+      - Label:
+          default: EC2
+        Parameters:
+          - pAmiId
+          - pInstanceType
     ParameterLabels:
       pOrg:
         default: Organization Identifier
@@ -71,9 +66,8 @@ Metadata:
         default: Application Identifier
       pEnvPurpose:
         default: Environment Purpose
-
       pAuthType:
-        default: "Authentication type: 'psk' - Pre-shared key or 'pubkey' - Certificate"
+        default: 'Authentication type: ''psk'' - Pre-shared key or ''pubkey'' - Certificate'
       pCertBucket:
         default: S3 Bucket Containing Certificates and Client Private Key
       pCgwCert:
@@ -81,16 +75,19 @@ Metadata:
       pCgwPrivateKey:
         default: Customer Gateway Private Key (S3 key)
       pCgwPrivateKeyPassphraseSecretName:
-        default: Name of secret in AWS Secrets Manager for Customer Gateway Private Key Passphrase
+        default: >-
+          Name of secret in AWS Secrets Manager for Customer Gateway Private Key
+          Passphrase
       pRootCaCert:
         default: Root CA Certificate (S3 key)
       pSubordinateCaCert:
         default: Subordinate CA Certificate (S3 key)
-
       pTunnel1PskSecretName:
         default: Name of secret in AWS Secrets Manager for VPN Tunnel 1 Pre-Shared Key
       pTunnel1VgwCertDomainName:
-        default: VPN Tunnel 1 Virtual Private Gateway Domain Name - Certificate Authentication. e.g vpn-07..78.endpoint-0
+        default: >-
+          VPN Tunnel 1 Virtual Private Gateway Domain Name - Certificate
+          Authentication. e.g vpn-07..78.endpoint-0
       pTunnel1VgwOutsideIpAddress:
         default: VPN Tunnel 1 Virtual Private Gateway Outside IP Address
       pTunnel1CgwInsideIpAddress:
@@ -101,11 +98,12 @@ Metadata:
         default: VPN Tunnel 1 Virtual Private Gateway BGP ASN
       pTunnel1BgpNeighborIpAddress:
         default: VPN Tunnel 1 BGP Neighbor IP Address
-
       pTunnel2PskSecretName:
         default: Name of secret in AWS Secrets Manager for VPN Tunnel 2 Pre-Shared Key
       pTunnel2VgwCertDomainName:
-        default: VPN Tunnel 2 Virtual Private Gateway Domain Name - Certificate Authentication. e.g vpn-07..78.endpoint-1
+        default: >-
+          VPN Tunnel 2 Virtual Private Gateway Domain Name - Certificate
+          Authentication. e.g vpn-07..78.endpoint-1
       pTunnel2VgwOutsideIpAddress:
         default: VPN Tunnel 2 Virtual Private Gateway Outside IP Address
       pTunnel2CgwInsideIpAddress:
@@ -116,7 +114,6 @@ Metadata:
         default: VPN Tunnel 2 Virtual Private Gateway BGP ASN
       pTunnel2BgpNeighborIpAddress:
         default: VPN Tunnel 2 BGP Neighbor IP Address
-
       pUseElasticIp:
         default: Use Elastic IP Address? (true/false)
       pEipAllocationId:
@@ -129,182 +126,293 @@ Metadata:
         default: VPC CIDR Block
       pSubnetId:
         default: Subnet ID for VPN Gateway
-
       pInstanceType:
         default: EC2 Instance Type
+      pKeyName:
+        default: EC2 SSH Key Name
       pAmiId:
         default: EC2 AMI ID
-
+  'AWS::CloudFormation::Designer':
+    ef0c5a38-0030-42b2-a6a2-87582364d222:
+      size:
+        width: 150
+        height: 150
+      position:
+        x: 60
+        'y': 90
+      z: 1
+      embeds: []
+    aaaebfde-1028-476b-bd8c-66cb62ee1032:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 270
+        'y': 90
+      z: 1
+      embeds: []
+    c19e5d09-9f12-4847-a442-0fe818721b3e:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 270
+        'y': 210
+      z: 1
+      embeds: []
+      isassociatedwith:
+        - aaaebfde-1028-476b-bd8c-66cb62ee1032
+    f84ffcff-1923-4b80-b4f7-c70770c6cac8:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 60
+        'y': 300
+      z: 1
+      embeds: []
+      isassociatedwith:
+        - aaaebfde-1028-476b-bd8c-66cb62ee1032
+    197cddc9-0eb2-4c47-b663-e310ad672377:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 390
+        'y': 90
+      z: 1
+      embeds: []
+      isassociatedwith:
+        - aaaebfde-1028-476b-bd8c-66cb62ee1032
+    3736fd41-ab27-4f1c-a672-44e1ed53c0c7:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 390
+        'y': 210
+      z: 1
+      embeds: []
+      isassociatedwith:
+        - aaaebfde-1028-476b-bd8c-66cb62ee1032
+    eec27446-dbd2-4738-8d94-4059655c7760:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 180
+        'y': 330
+      z: 1
+      embeds: []
+    d3f8d0e8-8d24-4ef7-93cf-040057323c57:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 300
+        'y': 330
+      z: 1
+      embeds: []
+    2d5680ce-e6d5-41ff-88ed-67461a6820fc:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 420
+        'y': 330
+      z: 1
+      embeds: []
+    d7059362-7d57-4b70-8297-3964e927ac2e:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 60
+        'y': 420
+      z: 1
+      embeds: []
+    3aece064-77bc-4b23-af34-e2126134a2cd:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 180
+        'y': 450
+      z: 1
+      embeds: []
+      isassociatedwith:
+        - eec27446-dbd2-4738-8d94-4059655c7760
+      dependson:
+        - d7059362-7d57-4b70-8297-3964e927ac2e
 Parameters:
   pOrg:
     Type: String
     Description: Used to qualify resource names
     Default: example
-
   pSystem:
     Type: String
     Description: Used to qualify resource names
     Default: infra
-
   pApp:
     Type: String
     Description: Used to qualify resource names
     Default: vpngw
-
   pEnvPurpose:
     Type: String
     Description: Used to qualify resource names. 10 characters max.
     AllowedPattern: '^[a-zA-Z0-9-_]{1,10}$'
     Default: test
-
   pAuthType:
     Type: String
-    Description: "Authentication type: 'psk' - Pre-shared key or 'pubkey' - Certificate"
+    Description: 'Authentication type: ''psk'' - Pre-shared key or ''pubkey'' - Certificate'
     Default: psk
     AllowedValues:
       - psk
       - pubkey
-
   pCertBucket:
-    Description: S3 Bucket Containing Certificates and Customer Gateway Private Key. Required for certificate-based authentication.
+    Description: >-
+      S3 Bucket Containing Certificates and Customer Gateway Private Key.
+      Required for certificate-based authentication.
     Type: String
     Default: ''
-
   pCgwCert:
-    Description: Customer Gateway Certificate (S3 key). Required for certificate-based authentication.
+    Description: >-
+      Customer Gateway Certificate (S3 key). Required for certificate-based
+      authentication.
     Type: String
     Default: ''
-  
   pCgwPrivateKey:
-    Description: Customer Gateway Private Key (S3 key). Required for certificate-based authentication.
+    Description: >-
+      Customer Gateway Private Key (S3 key). Required for certificate-based
+      authentication.
     Type: String
     Default: ''
-
   pCgwPrivateKeyPassphraseSecretName:
-    Description: Name of secret in AWS Secrets Manager for Customer Gateway Private Key Passphrase. Required for certificate-based authentication.
+    Description: >-
+      Name of secret in AWS Secrets Manager for Customer Gateway Private Key
+      Passphrase. Required for certificate-based authentication.
     Type: String
     Default: ''
-
   pRootCaCert:
-    Description: Root CA Certificate (S3 key). Required for certificate-based authentication.
+    Description: >-
+      Root CA Certificate (S3 key). Required for certificate-based
+      authentication.
     Type: String
     Default: ''
-
   pSubordinateCaCert:
-    Description: Subordinate CA Certificate (S3 key). Required for certificate-based authentication.
+    Description: >-
+      Subordinate CA Certificate (S3 key). Required for certificate-based
+      authentication.
     Type: String
     Default: ''
-
   pTunnel1PskSecretName:
-    Description: Name of secret in AWS Secrets Manager for VPN Tunnel 1 Pre-Shared Key. Required for PSK-based authentication.
+    Description: >-
+      Name of secret in AWS Secrets Manager for VPN Tunnel 1 Pre-Shared Key.
+      Required for PSK-based authentication.
     Type: String
     Default: ''
-
   pTunnel1VgwCertDomainName:
-    Description: VPN Tunnel 1 Virtual Private Gateway Domain Name. Required for certificate-based authentication. e.g vpn-07..78.endpoint-1
+    Description: >-
+      VPN Tunnel 1 Virtual Private Gateway Domain Name. Required for
+      certificate-based authentication. e.g vpn-07..78.endpoint-1
     Type: String
     Default: ''
-
   pTunnel1VgwOutsideIpAddress:
     Description: VPN Tunnel 1 Virtual Private Gateway Outside IP Address
     Type: String
-
   pTunnel1CgwInsideIpAddress:
-    Description:  VPN Tunnel 1 Customer Gateway Inside IP Address
+    Description: VPN Tunnel 1 Customer Gateway Inside IP Address
     Type: String
-    AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|3[0-8]))$ 
-
+    AllowedPattern: >-
+      ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|3[0-8]))$
   pTunnel1VgwInsideIpAddress:
     Description: VPN Tunnel 1 Virtual Private Gateway Inside IP Address
     Type: String
-    AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|3[0-8]))$ 
-
+    AllowedPattern: >-
+      ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|3[0-8]))$
   pTunnel1VgwBgpAsn:
     Description: VPN Tunnel 1 Virtual Private Gateway BGP ASN
     Type: Number
     Default: 64512
-
   pTunnel1BgpNeighborIpAddress:
     Description: VPN Tunnel 1 BGP Neighbor IP Address
     Type: String
-  
   pTunnel2PskSecretName:
-    Description: Name of secret in AWS Secrets Manager for VPN Tunnel 2 Pre-Shared Key. Required for PSK-based authentication.
+    Description: >-
+      Name of secret in AWS Secrets Manager for VPN Tunnel 2 Pre-Shared Key.
+      Required for PSK-based authentication.
     Type: String
     Default: ''
-
   pTunnel2VgwCertDomainName:
-    Description: VPN Tunnel 2 Virtual Private Gateway Domain Name. Required for certificate-based authentication. e.g vpn-07..78.endpoint-1
+    Description: >-
+      VPN Tunnel 2 Virtual Private Gateway Domain Name. Required for
+      certificate-based authentication. e.g vpn-07..78.endpoint-1
     Type: String
     Default: ''
-
   pTunnel2VgwOutsideIpAddress:
     Description: VPN Tunnel 2 Virtual Private Gateway Outside IP Address
     Type: String
-
   pTunnel2CgwInsideIpAddress:
-    Description:  VPN Tunnel 2 Customer Gateway Inside IP Address
+    Description: VPN Tunnel 2 Customer Gateway Inside IP Address
     Type: String
-    AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|3[0-8]))$ 
-
+    AllowedPattern: >-
+      ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|3[0-8]))$
   pTunnel2VgwInsideIpAddress:
     Description: VPN Tunnel 2 Virtual Private Gateway Inside IP Address
     Type: String
-    AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|3[0-8]))$ 
-  
+    AllowedPattern: >-
+      ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|3[0-8]))$
   pTunnel2VgwBgpAsn:
     Description: VPN Tunnel 2 Virtual Private Gateway BGP ASN
     Type: Number
     Default: 64512
-
   pUseElasticIp:
     Type: String
     Description: Whether Elastic IP address is to be used.
     Default: true
-    AllowedValues: [true, false]
-
+    AllowedValues:
+      - true
+      - false
   pEipAllocationId:
     Description: Elastic IP Address Allocation ID
     Type: String
     Default: ''
-
   pLocalBgpAsn:
     Description: Local VPN Gateway's BGP ASN
     Type: Number
     Default: 65000
-
   pTunnel2BgpNeighborIpAddress:
     Description: VPN Tunnel 2 BGP Neighbor IP Address
     Type: String
-
   pVpcId:
     Description: VPC ID
-    Type: AWS::EC2::VPC::Id
-
+    Type: 'AWS::EC2::VPC::Id'
   pVpcCidr:
     Description: VPC CIDR Block
     Type: String
-    AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$
-
+    AllowedPattern: >-
+      ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$
   pSubnetId:
     Description: Subnet ID for VPN Gateway
-    Type: AWS::EC2::Subnet::Id
-
+    Type: 'AWS::EC2::Subnet::Id'
   pInstanceType:
     Description: EC2 Instance Type
     Type: String
-    Default: t3a.micro
+    Default: t2.micro
     AllowedValues:
+      - t2.micro
       - t3a.micro
       - t3a.small
       - t3a.medium
     ConstraintDescription: must be a valid EC2 instance type.
-
+  pKeyName:
+    Description: The name of the key pair
+    Type: String
+    Default: ''
   pAmiId:
     Description: EC2 AMI ID
     Type: 'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'
-    Default: '/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-ebs'
-
+    Default: /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-ebs
 Rules:
   SubnetsInVPC:
     Assertions:
@@ -315,15 +423,19 @@ Rules:
                 - VpcId
             - 'Fn::RefAll': 'AWS::EC2::VPC::Id'
         AssertDescription: All subnets must in the VPC
-
 Conditions:
-  cUseCertAuth:  !Equals [ !Ref 'pAuthType', 'pubkey' ]
-  cUsePskAuth:   !Equals [ !Ref 'pAuthType', 'psk' ]
-  cUseElasticIp: !Equals [ !Ref 'pUseElasticIp', true ]
-
+  cUseCertAuth: !Equals 
+    - Ref: pAuthType
+    - pubkey
+  cUsePskAuth: !Equals 
+    - !Ref pAuthType
+    - psk
+  cUseElasticIp: !Equals 
+    - !Ref pUseElasticIp
+    - true
 Resources:
   rInstanceSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
+    Type: 'AWS::EC2::SecurityGroup'
     Properties:
       GroupName: !Sub '${pSystem}-${pApp}-ec2-${pEnvPurpose}'
       VpcId: !Ref pVpcId
@@ -357,15 +469,17 @@ Resources:
           FromPort: 0
           ToPort: 65535
           CidrIp: !Ref pVpcCidr
-
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: d3f8d0e8-8d24-4ef7-93cf-040057323c57
   rLaunchTemplate:
-    Type: AWS::EC2::LaunchTemplate
-    Properties: 
+    Type: 'AWS::EC2::LaunchTemplate'
+    Properties:
       LaunchTemplateName: !Sub '${pSystem}-${pApp}-${pEnvPurpose}'
-      LaunchTemplateData: 
+      LaunchTemplateData:
         InstanceType: !Ref pInstanceType
         ImageId: !Ref pAmiId
-        IamInstanceProfile: 
+        IamInstanceProfile:
           Arn: !GetAtt rInstanceProfile.Arn
         NetworkInterfaces:
           - DeviceIndex: 0
@@ -375,7 +489,7 @@ Resources:
               - !Ref rInstanceSecurityGroup
             AssociatePublicIpAddress: !Ref pUseElasticIp
         UserData:
-          Fn::Base64: !Sub |
+          'Fn::Base64': !Sub |
             #!/bin/bash -x
 
             yum install -y amazon-cloudwatch-agent
@@ -391,11 +505,11 @@ Resources:
                 --exit-code $? \
                 '${rVpnGatewayWaitHandle}'
     Metadata:
-      AWS::CloudFormation::Authentication:
+      'AWS::CloudFormation::Authentication':
         S3BucketAccessCredential:
-          type: "S3"
+          type: S3
           roleName: !Ref rRole
-      AWS::CloudFormation::Init:
+      'AWS::CloudFormation::Init':
         configSets:
           psk:
             - 01-config-cloudwatch-agent
@@ -544,9 +658,15 @@ Resources:
         02-restart-cloudwatch-agent:
           commands:
             01-stop-service:
-              command: /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a stop
+              command: >-
+                /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl
+                -a stop
             02-start-service:
-              command: /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json -s
+              command: >-
+                /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl
+                -a fetch-config -m ec2 -c
+                file:/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
+                -s
         03-install-epel:
           commands:
             01-install-epel:
@@ -584,10 +704,9 @@ Resources:
               owner: root
               group: root
             /etc/strongswan/ipsec.conf:
-              content: !Join
+              content: !Join 
                 - ''
-                - 
-                  - !Sub |
+                - - !Sub |
                     conn %default
                       leftauth=${pAuthType}
                       rightauth=${pAuthType}
@@ -617,7 +736,7 @@ Resources:
                       right=${pTunnel1VgwOutsideIpAddress}
                       auto=start
                       mark=100
-                  - !If
+                  - !If 
                     - cUseCertAuth
                     - !Sub |2
                         leftcert=client-public-cert.pem
@@ -630,7 +749,7 @@ Resources:
                       right=${pTunnel2VgwOutsideIpAddress}
                       auto=start
                       mark=200
-                  - !If
+                  - !If 
                     - cUseCertAuth
                     - !Sub |2
                         leftcert=client-public-cert.pem
@@ -640,61 +759,7 @@ Resources:
               owner: root
               group: root
             /etc/strongswan/ipsec-vti.sh:
-              content: !Sub |
-                #!/bin/bash
-                
-                #@ /etc/strongswan/ipsec-vti.sh (Centos) or /etc/strongswan.d/ipsec-vti.sh (Ubuntu)
-                
-                # AWS VPC Hardware VPN Strongswan updown Script
-                
-                # Usage Instructions:
-                # Add "install_routes = no" to /etc/strongswan/strongswan.d/charon.conf or /etc/strongswan.d/charon.conf
-                # Add "install_virtual_ip = no" to /etc/strongswan/strongswan.d/charon.conf or /etc/strongswan.d/charon.conf
-                # For Ubuntu: Add "leftupdown=/etc/strongswan.d/ipsec-vti.sh" to /etc/ipsec.conf
-                # For RHEL/Centos: Add "leftupdown=/etc/strongswan/ipsec-vti.sh" to /etc/strongswan/ipsec.conf
-                # For RHEL/Centos 6 and below: git clone git://git.kernel.org/pub/scm/linux/kernel/git/shemminger/iproute2.git && cd iproute2 && make && cp ./ip/ip /usr/local/sbin/ip
-                
-                # Adjust the below according to the Generic Gateway Configuration file provided to you by AWS.
-                # Sample: http://docs.aws.amazon.com/AmazonVPC/latest/NetworkAdminGuide/GenericConfig.html
-                
-                IP=$(which ip)
-                IPTABLES=$(which iptables)
-                
-                PLUTO_MARK_OUT_ARR=(${!PLUTO_MARK_OUT//// })
-                PLUTO_MARK_IN_ARR=(${!PLUTO_MARK_IN//// })
-                case "$PLUTO_CONNECTION" in
-                  AWS-VPC-TUNNEL-1)
-                    VTI_INTERFACE=vti1
-                    VTI_LOCALADDR=${pTunnel1CgwInsideIpAddress}
-                    VTI_REMOTEADDR=${pTunnel1VgwInsideIpAddress}
-                    ;;
-                  AWS-VPC-TUNNEL-2)
-                    VTI_INTERFACE=vti2
-                    VTI_LOCALADDR=${pTunnel2CgwInsideIpAddress}
-                    VTI_REMOTEADDR=${pTunnel2VgwInsideIpAddress}
-                    ;;
-                esac
-                
-                case "${!PLUTO_VERB}" in
-                    up-client)
-                        #$IP tunnel add ${!VTI_INTERFACE} mode vti local ${!PLUTO_ME} remote ${!PLUTO_PEER} okey ${!PLUTO_MARK_OUT_ARR[0]} ikey ${!PLUTO_MARK_IN_ARR[0]}
-                        $IP link add ${!VTI_INTERFACE} type vti local ${!PLUTO_ME} remote ${!PLUTO_PEER} okey ${!PLUTO_MARK_OUT_ARR[0]} ikey ${!PLUTO_MARK_IN_ARR[0]}
-                        sysctl -w net.ipv4.conf.${!VTI_INTERFACE}.disable_policy=1
-                        sysctl -w net.ipv4.conf.${!VTI_INTERFACE}.rp_filter=2 || sysctl -w net.ipv4.conf.${!VTI_INTERFACE}.rp_filter=0
-                        $IP addr add ${!VTI_LOCALADDR} remote ${!VTI_REMOTEADDR} dev ${!VTI_INTERFACE}
-                        $IP link set ${!VTI_INTERFACE} up mtu 1436
-                	      $IPTABLES -t mangle -I FORWARD -o ${!VTI_INTERFACE} -p tcp -m tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
-                        $IPTABLES -t mangle -I INPUT -p esp -s ${!PLUTO_PEER} -d ${!PLUTO_ME} -j MARK --set-xmark ${!PLUTO_MARK_IN}
-                        $IP route flush table 220
-                        #/etc/init.d/bgpd reload || /etc/init.d/quagga force-reload bgpd
-                        ;;
-                    down-client)
-                        #$IP tunnel del ${!VTI_INTERFACE}
-                        $IP link del ${!VTI_INTERFACE}
-                	      $IPTABLES -t mangle -D FORWARD -o ${!VTI_INTERFACE} -p tcp -m tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
-                        $IPTABLES -t mangle -D INPUT -p esp -s ${!PLUTO_PEER} -d ${!PLUTO_ME} -j MARK --set-xmark ${!PLUTO_MARK_IN}
-                        ;;
-                esac
+              content: !Sub "#!/bin/bash\n\n#@ /etc/strongswan/ipsec-vti.sh (Centos) or /etc/strongswan.d/ipsec-vti.sh (Ubuntu)\n\n# AWS VPC Hardware VPN Strongswan updown Script\n\n# Usage Instructions:\n# Add \"install_routes = no\" to /etc/strongswan/strongswan.d/charon.conf or /etc/strongswan.d/charon.conf\n# Add \"install_virtual_ip = no\" to /etc/strongswan/strongswan.d/charon.conf or /etc/strongswan.d/charon.conf\n# For Ubuntu: Add \"leftupdown=/etc/strongswan.d/ipsec-vti.sh\" to /etc/ipsec.conf\n# For RHEL/Centos: Add \"leftupdown=/etc/strongswan/ipsec-vti.sh\" to /etc/strongswan/ipsec.conf\n# For RHEL/Centos 6 and below: git clone git://git.kernel.org/pub/scm/linux/kernel/git/shemminger/iproute2.git && cd iproute2 && make && cp ./ip/ip /usr/local/sbin/ip\n\n# Adjust the below according to the Generic Gateway Configuration file provided to you by AWS.\n# Sample: http://docs.aws.amazon.com/AmazonVPC/latest/NetworkAdminGuide/GenericConfig.html\n\nIP=$(which ip)\nIPTABLES=$(which iptables)\n\nPLUTO_MARK_OUT_ARR=(${!PLUTO_MARK_OUT//// })\nPLUTO_MARK_IN_ARR=(${!PLUTO_MARK_IN//// })\ncase \"$PLUTO_CONNECTION\" in\n  AWS-VPC-TUNNEL-1)\n    VTI_INTERFACE=vti1\n    VTI_LOCALADDR=${pTunnel1CgwInsideIpAddress}\n    VTI_REMOTEADDR=${pTunnel1VgwInsideIpAddress}\n    ;;\n  AWS-VPC-TUNNEL-2)\n    VTI_INTERFACE=vti2\n    VTI_LOCALADDR=${pTunnel2CgwInsideIpAddress}\n    VTI_REMOTEADDR=${pTunnel2VgwInsideIpAddress}\n    ;;\nesac\n\ncase \"${!PLUTO_VERB}\" in\n    up-client)\n        #$IP tunnel add ${!VTI_INTERFACE} mode vti local ${!PLUTO_ME} remote ${!PLUTO_PEER} okey ${!PLUTO_MARK_OUT_ARR[0]} ikey ${!PLUTO_MARK_IN_ARR[0]}\n        $IP link add ${!VTI_INTERFACE} type vti local ${!PLUTO_ME} remote ${!PLUTO_PEER} okey ${!PLUTO_MARK_OUT_ARR[0]} ikey ${!PLUTO_MARK_IN_ARR[0]}\n        sysctl -w net.ipv4.conf.${!VTI_INTERFACE}.disable_policy=1\n        sysctl -w net.ipv4.conf.${!VTI_INTERFACE}.rp_filter=2 || sysctl -w net.ipv4.conf.${!VTI_INTERFACE}.rp_filter=0\n        $IP addr add ${!VTI_LOCALADDR} remote ${!VTI_REMOTEADDR} dev ${!VTI_INTERFACE}\n        $IP link set ${!VTI_INTERFACE} up mtu 1436\n\t      $IPTABLES -t mangle -I FORWARD -o ${!VTI_INTERFACE} -p tcp -m tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu\n        $IPTABLES -t mangle -I INPUT -p esp -s ${!PLUTO_PEER} -d ${!PLUTO_ME} -j MARK --set-xmark ${!PLUTO_MARK_IN}\n        $IP route flush table 220\n        #/etc/init.d/bgpd reload || /etc/init.d/quagga force-reload bgpd\n        ;;\n    down-client)\n        #$IP tunnel del ${!VTI_INTERFACE}\n        $IP link del ${!VTI_INTERFACE}\n\t      $IPTABLES -t mangle -D FORWARD -o ${!VTI_INTERFACE} -p tcp -m tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu\n        $IPTABLES -t mangle -D INPUT -p esp -s ${!PLUTO_PEER} -d ${!PLUTO_ME} -j MARK --set-xmark ${!PLUTO_MARK_IN}\n        ;;\nesac\n"
               mode: '000700'
               owner: root
               group: root
@@ -757,7 +822,7 @@ Resources:
                 # name in /etc/sysctl.d/ and put new settings there.
                 #
                 # For more information, see sysctl.conf(5) and sysctl.d(5).
-                
+
                 net.ipv4.ip_forward = 1
                 net.ipv4.conf.all.send_redirects = 0
                 net.ipv4.conf.default.send_redirects = 0
@@ -783,8 +848,8 @@ Resources:
           files:
             /etc/strongswan/ipsec.secrets:
               content: !Sub |
-                  ${pTunnel1VgwOutsideIpAddress} : PSK "{TUNNEL_1_PSK}"
-                  ${pTunnel2VgwOutsideIpAddress} : PSK "{TUNNEL_2_PSK}"
+                ${pTunnel1VgwOutsideIpAddress} : PSK "{TUNNEL_1_PSK}"
+                ${pTunnel2VgwOutsideIpAddress} : PSK "{TUNNEL_2_PSK}"
               mode: '000600'
               owner: root
               group: root
@@ -817,47 +882,55 @@ Resources:
               group: root
           commands:
             00-set-psk:
-              command: >- 
-                /tmp/set-psk.sh
+              command: /tmp/set-psk.sh
         05-config-vpn-gateway-cert-files:
           files:
-            /etc/strongswan/ipsec.d/cacerts/root-ca.pem: 
-              source: !Sub "https://${pCertBucket}.s3.${AWS::Region}.amazonaws.com/${pRootCaCert}"
+            /etc/strongswan/ipsec.d/cacerts/root-ca.pem:
+              source: !Sub >-
+                https://${pCertBucket}.s3.${AWS::Region}.amazonaws.com/${pRootCaCert}
               mode: '000600'
-              owner: root 
+              owner: root
               group: root
-              authentication: "S3BucketAccessCredential"
+              authentication: S3BucketAccessCredential
             /etc/strongswan/ipsec.d/cacerts/subordinate-ca.pem:
-              source: !Sub "https://${pCertBucket}.s3.${AWS::Region}.amazonaws.com/${pSubordinateCaCert}"
-              mode: '000600' 
-              owner: root 
-              group: root
-              authentication: "S3BucketAccessCredential"
-            /etc/strongswan/ipsec.d/certs/client-public-cert.pem:
-              source: !Sub "https://${pCertBucket}.s3.${AWS::Region}.amazonaws.com/${pCgwCert}"
+              source: !Sub >-
+                https://${pCertBucket}.s3.${AWS::Region}.amazonaws.com/${pSubordinateCaCert}
               mode: '000600'
-              owner: root 
+              owner: root
               group: root
-              authentication: "S3BucketAccessCredential"
+              authentication: S3BucketAccessCredential
+            /etc/strongswan/ipsec.d/certs/client-public-cert.pem:
+              source: !Sub >-
+                https://${pCertBucket}.s3.${AWS::Region}.amazonaws.com/${pCgwCert}
+              mode: '000600'
+              owner: root
+              group: root
+              authentication: S3BucketAccessCredential
             /etc/strongswan/ipsec.d/private/client-private-key.pem:
-              source: !Sub "https://${pCertBucket}.s3.${AWS::Region}.amazonaws.com/${pCgwPrivateKey}"
-              mode: '000600' 
-              owner: root 
+              source: !Sub >-
+                https://${pCertBucket}.s3.${AWS::Region}.amazonaws.com/${pCgwPrivateKey}
+              mode: '000600'
+              owner: root
               group: root
-              authentication: "S3BucketAccessCredential"
+              authentication: S3BucketAccessCredential
             /etc/strongswan/ipsec.secrets:
               content: |
-                  : RSA client-private-key.pem {PASSPHRASE}
+                : RSA client-private-key.pem {PASSPHRASE}
               mode: '000600'
               owner: root
               group: root
             /tmp/set-passphrase.sh:
-              content: !Sub |
+              content: !Sub >
                 #!/bin/bash
-                
-                PASSPHRASE=$(aws secretsmanager get-secret-value --secret-id ${pCgwPrivateKeyPassphraseSecretName} --region ${AWS::Region} | jq -r '.SecretString' | jq -r '.passphrase') &&
-                
+
+
+                PASSPHRASE=$(aws secretsmanager get-secret-value --secret-id
+                ${pCgwPrivateKeyPassphraseSecretName} --region ${AWS::Region} |
+                jq -r '.SecretString' | jq -r '.passphrase') &&
+
+
                 if test -z "$PASSPHRASE"
+
                 then
                   echo "\$PASSPHRASE is empty"
                   exit 1
@@ -870,57 +943,51 @@ Resources:
               group: root
           commands:
             00-set-private-key-passphrase:
-              command: >- 
-                /tmp/set-passphrase.sh
+              command: /tmp/set-passphrase.sh
         06-config-vpn-gateway-commands:
           commands:
             00-sed-instance-specific-settings:
-              command: >- 
+              command: >-
                 ipaddr=$(curl 169.254.169.254/latest/meta-data/local-ipv4) &&
                 sed -i -e "s/{PRIVATE_IP}/${ipaddr}/" /etc/quagga/zebra.conf && 
                 sed -i -e "s/{PRIVATE_IP}/${ipaddr}/" /etc/quagga/bgpd.conf && 
-                hostname=$(curl 169.254.169.254/latest/meta-data/local-hostname) &&
-                sed -i -e "s/{HOSTNAME}/${hostname}/" /etc/quagga/zebra.conf
+                hostname=$(curl 169.254.169.254/latest/meta-data/local-hostname)
+                && sed -i -e "s/{HOSTNAME}/${hostname}/" /etc/quagga/zebra.conf
             01-load-sysctl-changes:
               command: sysctl -p /etc/sysctl.conf
             02-enable-ip-forwarding:
-              command: >- 
-                sysctl -w net.ipv4.ip_forward=1 && 
-                sysctl -w net.ipv4.conf.eth0.disable_xfrm=1 && 
-                sysctl -w net.ipv4.conf.eth0.disable_policy=1
+              command: >-
+                sysctl -w net.ipv4.ip_forward=1 &&  sysctl -w
+                net.ipv4.conf.eth0.disable_xfrm=1 &&  sysctl -w
+                net.ipv4.conf.eth0.disable_policy=1
             03-enable-start-ntpd:
-              command: >- 
-                systemctl enable ntpd && 
-                systemctl start  ntpd
+              command: systemctl enable ntpd &&  systemctl start  ntpd
             04-enable-start-strongswan:
-              command: >- 
-                systemctl enable strongswan && 
-                systemctl start  strongswan
+              command: systemctl enable strongswan &&  systemctl start  strongswan
             05-enable-start-zebra:
-              command: >- 
-                systemctl enable zebra && 
-                systemctl start  zebra
+              command: systemctl enable zebra &&  systemctl start  zebra
             06-enable-start-bgpd:
-              command: >- 
-                systemctl enable bgpd && 
-                systemctl start  bgpd
-
+              command: systemctl enable bgpd &&  systemctl start  bgpd
+      'AWS::CloudFormation::Designer':
+        id: 2d5680ce-e6d5-41ff-88ed-67461a6820fc
   rVpnGatewayEipAssociation:
-    Type: AWS::EC2::EIPAssociation
+    Type: 'AWS::EC2::EIPAssociation'
     Condition: cUseElasticIp
     Properties:
       AllocationId: !Ref pEipAllocationId
       InstanceId: !Ref rVpnGateway
-
   rVpnGateway:
-    Type: AWS::EC2::Instance
+    Type: 'AWS::EC2::Instance'
     Properties:
+      KeyName:
+        Ref: pKeyName
       LaunchTemplate:
         LaunchTemplateId:
           Ref: rLaunchTemplate
         Version:
-          Fn::GetAtt:
-            [ rLaunchTemplate, LatestVersionNumber ]
+          'Fn::GetAtt':
+            - rLaunchTemplate
+            - LatestVersionNumber
       NetworkInterfaces:
         - DeviceIndex: '0'
           SubnetId: !Ref pSubnetId
@@ -928,38 +995,45 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub '${pSystem}-${pApp}-${pEnvPurpose}'
-
-  rVpnGatewayWaitHandle: 
-   Type: AWS::CloudFormation::WaitConditionHandle
-
-  rVpnGatewayWaitCondition1: 
-    Type: AWS::CloudFormation::WaitCondition
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: d7059362-7d57-4b70-8297-3964e927ac2e
+  rVpnGatewayWaitHandle:
+    Type: 'AWS::CloudFormation::WaitConditionHandle'
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: eec27446-dbd2-4738-8d94-4059655c7760
+  rVpnGatewayWaitCondition1:
+    Type: 'AWS::CloudFormation::WaitCondition'
     DependsOn: rVpnGateway
-    Properties: 
-      Handle: 
+    Properties:
+      Handle:
         Ref: rVpnGatewayWaitHandle
-      Timeout: '300'
+      Timeout: '1800'
       Count: 1
-
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 3aece064-77bc-4b23-af34-e2126134a2cd
   rRole:
-    Type: AWS::IAM::Role
+    Type: 'AWS::IAM::Role'
     Properties:
       RoleName: !Sub '${pOrg}-${pSystem}-${pApp}-${pEnvPurpose}-svc-cloud-watch-ssm'
       Path: !Sub '/${pOrg}/${pSystem}/${pApp}/'
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
-          -
-            Effect: Allow
+          - Effect: Allow
             Principal:
               Service: ec2.amazonaws.com
-            Action: sts:AssumeRole
+            Action: 'sts:AssumeRole'
       ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
-        - arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
-
+        - 'arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore'
+        - 'arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy'
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: aaaebfde-1028-476b-bd8c-66cb62ee1032
   rPolicyS3:
-    Type: AWS::IAM::Policy
+    Type: 'AWS::IAM::Policy'
     Condition: cUseCertAuth
     Properties:
       PolicyName: !Sub '${pOrg}-${pSystem}-${pApp}-${pEnvPurpose}-s3-read-only'
@@ -967,14 +1041,16 @@ Resources:
         Version: 2012-10-17
         Statement:
           - Effect: Allow
-            Action: 
-              - s3:GetObject
+            Action:
+              - 's3:GetObject'
             Resource: !Sub 'arn:aws:s3:::${pCertBucket}/*'
       Roles:
         - !Ref rRole
-
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 3736fd41-ab27-4f1c-a672-44e1ed53c0c7
   rPolicySecretsManagerCertAuth:
-    Type: AWS::IAM::Policy
+    Type: 'AWS::IAM::Policy'
     Condition: cUseCertAuth
     Properties:
       PolicyName: !Sub '${pOrg}-${pSystem}-${pApp}-${pEnvPurpose}-secrets-manager-read-only'
@@ -983,14 +1059,17 @@ Resources:
         Statement:
           - Effect: Allow
             Action:
-              - secretsmanager:GetSecretValue
-              - secretsmanager:DescribeSecret
-            Resource: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${pCgwPrivateKeyPassphraseSecretName}-*'
+              - 'secretsmanager:GetSecretValue'
+              - 'secretsmanager:DescribeSecret'
+            Resource: !Sub >-
+              arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${pCgwPrivateKeyPassphraseSecretName}-*
       Roles:
         - !Ref rRole
-
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 197cddc9-0eb2-4c47-b663-e310ad672377
   rPolicySecretsManagerPskAuth:
-    Type: AWS::IAM::Policy
+    Type: 'AWS::IAM::Policy'
     Condition: cUsePskAuth
     Properties:
       PolicyName: !Sub '${pOrg}-${pSystem}-${pApp}-${pEnvPurpose}-secrets-manager-read-only'
@@ -999,24 +1078,33 @@ Resources:
         Statement:
           - Effect: Allow
             Action:
-              - secretsmanager:GetSecretValue
-              - secretsmanager:DescribeSecret
-            Resource: 
-              - !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${pTunnel1PskSecretName}-*'
-              - !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${pTunnel2PskSecretName}-*'
+              - 'secretsmanager:GetSecretValue'
+              - 'secretsmanager:DescribeSecret'
+            Resource:
+              - !Sub >-
+                arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${pTunnel1PskSecretName}-*
+              - !Sub >-
+                arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${pTunnel2PskSecretName}-*
       Roles:
         - !Ref rRole
-
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: f84ffcff-1923-4b80-b4f7-c70770c6cac8
   rInstanceProfile:
-    Type: AWS::IAM::InstanceProfile
+    Type: 'AWS::IAM::InstanceProfile'
     Properties:
       InstanceProfileName: !Sub '${pSystem}-${pApp}-${pEnvPurpose}'
       Path: !Sub '/${pOrg}/${pSystem}/${pApp}/'
       Roles:
         - !Ref rRole
-
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: c19e5d09-9f12-4847-a442-0fe818721b3e
   rCloudWatchLogsAgentGroup:
-    Type: AWS::Logs::LogGroup
+    Type: 'AWS::Logs::LogGroup'
     Properties:
       LogGroupName: !Sub '/${pSystem}/${pApp}/ec2/${pEnvPurpose}'
       RetentionInDays: 30
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: ef0c5a38-0030-42b2-a6a2-87582364d222
