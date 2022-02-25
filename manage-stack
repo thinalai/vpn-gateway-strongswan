@@ -41,7 +41,7 @@ while (( "$#" )); do
 done
 
 eval set -- "$PARAMS"
-
+DISABLE_ROLLBACK="--disable-rollback"
 if [ -z $UPDATE ]; then
   CMD='create-stack --enable-termination-protection'
 else
@@ -78,7 +78,9 @@ aws cloudformation ${CMD} \
                      --template-body file://./${TEMPLATE} \
                      --parameters file://${1} \
                      --capabilities CAPABILITY_NAMED_IAM \
+                     ${DISABLE_ROLLBACK} \
                      ${REGION} \
                      ${PROFILE}
+
 
 #aws cloudformation wait stack-create-complete --stack-name ${STACK_NAME} --region ${AWS_REGION} --profile ${AWS_PROFILE}
