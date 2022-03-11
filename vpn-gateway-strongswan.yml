@@ -293,8 +293,9 @@ Parameters:
   pInstanceType:
     Description: EC2 Instance Type
     Type: String
-    Default: t3a.micro
+    Default: t2.micro
     AllowedValues:
+      - t2.micro
       - t3a.micro
       - t3a.small
       - t3a.medium
@@ -398,6 +399,7 @@ Resources:
       AWS::CloudFormation::Init:
         configSets:
           psk:
+            - 00-config-cfn-hup
             - 01-config-cloudwatch-agent
             - 02-restart-cloudwatch-agent
             - 03-install-epel
@@ -405,12 +407,45 @@ Resources:
             - 05-config-vpn-gateway-secrets-psk
             - 06-config-vpn-gateway-commands
           pubkey:
+            - 00-config-cfn-hup
             - 01-config-cloudwatch-agent
             - 02-restart-cloudwatch-agent
             - 03-install-epel
             - 04-config-vpn-gateway-config
             - 05-config-vpn-gateway-cert-files
             - 06-config-vpn-gateway-commands
+        00-config-cfn-hup:
+          files:
+            /etc/cfn/cfn-hup.conf:
+              content: !Sub |
+                [main]
+                stack=${AWS::StackId}
+                region=${AWS::Region}
+              mode: '000400'
+              owner: root
+              group: root
+            /etc/cfn/hooks.d/cfn-auto-reloader.conf:
+              content: !Sub |
+                [cfn-auto-reloader-hook]
+                triggers=post.update
+                path=Resources.rLaunchTemplate.Metadata.AWS::CloudFormation::Init
+                action=/opt/aws/bin/cfn-init -v \
+                  --stack ${AWS::StackName} \
+                  --resource rLaunchTemplate \
+                  --configsets ${pAuthType} \
+                  --region ${AWS::Region}
+                runas=root
+              mode: '000400'
+              owner: root
+              group: root
+          services:
+            sysvinit:
+              cfn-hup:
+                enabled: 'true'
+                ensureRunning: 'true'
+                files:
+                  - /etc/cfn/cfn-hup.conf
+                  - /etc/cfn/hooks.d/cfn-auto-reloader.conf
         01-config-cloudwatch-agent:
           files:
             /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json:
@@ -891,19 +926,19 @@ Resources:
             03-enable-start-ntpd:
               command: >- 
                 systemctl enable ntpd && 
-                systemctl start  ntpd
+                systemctl restart  ntpd
             04-enable-start-strongswan:
               command: >- 
                 systemctl enable strongswan && 
-                systemctl start  strongswan
+                systemctl restart  strongswan
             05-enable-start-zebra:
               command: >- 
                 systemctl enable zebra && 
-                systemctl start  zebra
+                systemctl restart  zebra
             06-enable-start-bgpd:
               command: >- 
                 systemctl enable bgpd && 
-                systemctl start  bgpd
+                systemctl restart  bgpd
 
   rVpnGatewayEipAssociation:
     Type: AWS::EC2::EIPAssociation
@@ -1020,3 +1055,13 @@ Resources:
     Properties:
       LogGroupName: !Sub '/${pSystem}/${pApp}/ec2/${pEnvPurpose}'
       RetentionInDays: 30
+Outputs:
+  VPCID:
+    Description: "The VPC ID of VPN Server"
+    Value: !Ref pVpcId
+  InstanceID:
+    Description: "The InstanceID of VPN Server"
+    Value: !Ref rVpnGateway
+  PublicIP:
+    Description: "The Public IP of VPN Server"
+    Value: !GetAtt rVpnGateway.PublicIp
