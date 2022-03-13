@@ -1,0 +1,46 @@
+{
+  "version": "0",
+  "id": "77620389-7dfc-b30e-84ba-5424b19b4275",
+  "detail-type": "CloudWatch Alarm State Change",
+  "source": "aws.cloudwatch",
+  "account": "048421426246",
+  "time": "2022-03-09T16:11:38Z",
+  "region": "ap-southeast-1",
+  "resources": [
+    "arn:aws:cloudwatch:ap-southeast-1:048421426246:alarm:VPN 连接不可用"
+  ],
+  "detail": {
+    "alarmName": "VPN 连接不可用",
+    "state": {
+      "value": "ALARM",
+      "reason": "Threshold Crossed: 1 out of the last 1 datapoints [0.0 (09/03/22 16:10:00)] was less than or equal to the threshold (0.0) (minimum 1 datapoint for OK -\u003e ALARM transition).",
+      "reasonData": "{\"version\":\"1.0\",\"queryDate\":\"2022-03-09T16:11:38.224+0000\",\"startDate\":\"2022-03-09T16:10:00.000+0000\",\"statistic\":\"Average\",\"period\":60,\"recentDatapoints\":[0.0],\"threshold\":0.0,\"evaluatedDatapoints\":[{\"timestamp\":\"2022-03-09T16:10:00.000+0000\",\"sampleCount\":4.0,\"value\":0.0}]}",
+      "timestamp": "2022-03-09T16:11:38.228+0000"
+    },
+    "previousState": {
+      "value": "OK",
+      "reason": "Threshold Crossed: 1 out of the last 1 datapoints [0.5925925925925926 (09/03/22 15:51:00)] was not less than or equal to the threshold (0.0) (minimum 1 datapoint for ALARM -\u003e OK transition).",
+      "reasonData": "{\"version\":\"1.0\",\"queryDate\":\"2022-03-09T15:52:38.230+0000\",\"startDate\":\"2022-03-09T15:51:00.000+0000\",\"statistic\":\"Average\",\"period\":60,\"recentDatapoints\":[0.5925925925925926],\"threshold\":0.0,\"evaluatedDatapoints\":[{\"timestamp\":\"2022-03-09T15:51:00.000+0000\",\"sampleCount\":27.0,\"value\":0.5925925925925926}]}",
+      "timestamp": "2022-03-09T15:52:38.238+0000"
+    },
+    "configuration": {
+      "metrics": [
+        {
+          "id": "9abfb7ae-dd90-894b-c724-939032f21dfc",
+          "metricStat": {
+            "metric": {
+              "namespace": "AWS/VPN",
+              "name": "TunnelState",
+              "dimensions": {
+                "VpnId": "vpn-092d63a250a49a8d6"
+              }
+            },
+            "period": 60,
+            "stat": "Average"
+          },
+          "returnData": true
+        }
+      ]
+    }
+  }
+}

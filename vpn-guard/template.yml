@@ -1,0 +1,101 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: "AWS::Serverless-2016-10-31"
+Description: VPN guard for vpn failover.
+Parameters:
+  pVpcId:
+    Type: AWS::EC2::VPC::Id
+    Description: VPC ID
+  pVpnId:
+    Type: String
+    Description: VPN connection Id
+  pCGWMainPublicIP:
+    Type: String
+    Description: CGW main public IP address
+  pCGWBackupPublicIP:
+    Type: String
+    Description: CGW backup public IP address
+  pDestinationCidrBlock:
+    Type: String
+    Description: Destination CIDR block of route record
+Resources:
+  rVPNRouteTableFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: main
+      Runtime: go1.x
+      CodeUri: function/.
+      Environment:
+        Variables:
+          RESOURCE_ARN:
+            Fn::GetAtt:
+              - rVPNTunnelFailAlarm
+              - Arn
+          VPCID:
+            Ref: pVpcId
+          CGW_MAIN:
+            Ref: pCGWMainPublicIP
+          CGW_BACKUP:
+            Ref: pCGWBackupPublicIP
+          DESTINATION_CIDR_BLOCK:
+            Ref: pDestinationCidrBlock
+      Description: Call the AWS Lambda API
+      Timeout: 10
+      # Function's execution role
+      # Role: !GetAtt rRouteTableRole.Arn
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AWSLambda_ReadOnlyAccess
+        - AWSXrayWriteOnlyAccess
+        - Version: 2012-10-17
+          Statement:
+            - Effect: Allow
+              Action:
+                - ec2:DescribeNetworkInterfaces
+              Resource: "*"
+            - Effect: Allow
+              Action:
+                - ec2:DescribeRouteTables
+              Resource: "*"
+            - Effect: Allow
+              Action:
+                - ec2:CreateRoute
+                - ec2:ReplaceRoute
+              Resource: !Sub "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:route-table/*"
+      Tracing: Active
+  rVPNTunnelFailAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmDescription: Alarm for VPN tunnel state less than 0.5
+      AlarmName: vpn-tunnel-state-alarm
+      MetricName: TunnelState
+      Namespace: AWS/VPN
+      Dimensions:
+        - Name: VpnId
+          Value:
+            Ref: pVpnId
+      Period: 60
+      Threshold: 0.5
+      Statistic: Minimum
+      ComparisonOperator: LessThanThreshold
+      EvaluationPeriods: 1
+  rVPNTunnelStateEventRule:
+    Type: "AWS::Events::Rule"
+    Properties:
+      Description: VPN tunnel state change event
+      Name: vpn-tunnel-state-event-rule
+      State: ENABLED
+      EventPattern:
+        source:
+          - aws.cloudwatch
+        detail-type:
+          - CloudWatch Alarm State Change
+      Targets:
+        - Arn: !GetAtt rVPNRouteTableFunction.Arn
+          Id: "vpn-route-table-function"
+  rVPNTunnelStateEventInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt rVPNRouteTableFunction.Arn
+      Action: lambda:InvokeFunction
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt rVPNTunnelStateEventRule.Arn
